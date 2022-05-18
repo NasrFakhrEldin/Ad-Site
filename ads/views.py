@@ -12,13 +12,23 @@ from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 
 class AdListView(OwnerListView): # edited during adding the "fav adds section"
     model = Ad
-
+    template_name = "ads/ad_list.html"
+    
     def get(self, request):
         ad_list = Ad.objects.all()
         favorites = list()
         
         if request.user.is_authenticated:
-            rows = request.user.
+            rows = request.user.favorite_ads.values('id') # ids for all favorite_ads to this request_user
+            print(rows)
+            favorites = [row['id'] for row in rows]
+            # print(favorites)
+
+        return render(request, self.template_name, {
+            "ad_list" : ad_list,
+            "favorites" : favorites,
+        })
+        
 
 class AdDetailView(OwnerDetailView):
     model = Ad
