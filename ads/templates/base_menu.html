@@ -21,7 +21,9 @@
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                 <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
             </a>
-           
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a></li>
+            </ul>
         </li>
         {% else %}
         <li>

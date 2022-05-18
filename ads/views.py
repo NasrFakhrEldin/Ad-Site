@@ -10,9 +10,15 @@ from ads.models import Ad, Comment
 from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 
 
-class AdListView(OwnerListView):
+class AdListView(OwnerListView): # edited during adding the "fav adds section"
     model = Ad
 
+    def get(self, request):
+        ad_list = Ad.objects.all()
+        favorites = list()
+        
+        if request.user.is_authenticated:
+            rows = request.user.
 
 class AdDetailView(OwnerDetailView):
     model = Ad
@@ -24,6 +30,8 @@ class AdDetailView(OwnerDetailView):
         comment_form = CommentForm()
         context = { 'ad' : x, 'comments': comments, 'comment_form': comment_form }
         return render(request, self.template_name, context)
+
+
 
 class AdCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ads/ad_form.html'
@@ -44,6 +52,8 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         ad.owner = self.request.user
         ad.save()
         return redirect(self.success_url)
+
+
 
 class AdUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'ads/ad_form.html'
@@ -73,6 +83,7 @@ class AdDeleteView(OwnerDeleteView):
     model = Ad
 
 
+
 def stream_file(request, pk):
     ad = get_object_or_404(Ad, id=pk)
     response = HttpResponse()
@@ -80,6 +91,7 @@ def stream_file(request, pk):
     response['Content-Length'] = len(ad.picture)
     response.write(ad.picture)
     return response
+
 
 
 class CommentCreateView(LoginRequiredMixin, View):
