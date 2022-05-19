@@ -140,8 +140,9 @@ from django.db.utils import IntegrityError
 @method_decorator(csrf_exempt, name='dispatch')
 class AddFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk):
+        print(pk)
         t = get_object_or_404(Ad, id=pk)
-        fav = Fav(user=request.user, ad = t)
+        fav = Fav(user = request.user, ad = t)
 
         try: fav.save() # in case duplicate key
         except IntegrityError as e: pass
