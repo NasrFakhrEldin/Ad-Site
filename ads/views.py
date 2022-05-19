@@ -6,19 +6,29 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView
 
 from ads.forms import CreateForm, CommentForm
-from ads.models import Ad, Comment
+from ads.models import Ad, Comment, Fav
 from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 
 
 class AdListView(OwnerListView): # edited during adding the "fav adds section"
     model = Ad
-
+    template_name = "ads/ad_list.html"
+    
     def get(self, request):
         ad_list = Ad.objects.all()
         favorites = list()
         
         if request.user.is_authenticated:
-            rows = request.user.
+            rows = request.user.favorite_ads.values('id') # ids for all favorite_ads to this request_user
+            print(rows)
+            favorites = [row['id'] for row in rows]
+            # print(favorites)
+
+        return render(request, self.template_name, {
+            "ad_list" : ad_list,
+            "favorites" : favorites,
+        })
+        
 
 class AdDetailView(OwnerDetailView):
     model = Ad
@@ -111,6 +121,28 @@ class CommentDeleteView(OwnerDeleteView):
     def get_success_url(self):
         ad = self.object.ad
         return reverse('ads:ad_detail', args=[ad.id])
-        
-        
-        
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
+
+
+# class AddFavoriteView(OwnerAdFavoriteView):
+#     def post(self, request, pk):
+#         t = get_object_or_404(Ad, id=pk)
+#         fav = Fav(user=request.user, ad = t)
+
+#         try: fav.save() # in case duplicate key
+#         except IntegrityError as e: pass
+#         return HttpResponse()
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        t = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad = t)
+
+        try: fav.save() # in case duplicate key
+        except IntegrityError as e: pass
+        return HttpResponse()
