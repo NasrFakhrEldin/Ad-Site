@@ -1,7 +1,15 @@
 
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
-
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+
+# class OwnerAdFavoriteView(LoginRequiredMixin, View):
+#     def get_queryset(self):
+#         qs = super(OwnerAdFavoriteView, self).get_queryset()
+        
+#         return filter(owner = self.request.user)
 
 
 class OwnerListView(ListView):
