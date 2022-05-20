@@ -14,11 +14,22 @@
 
 
         {% if user.is_authenticated %}
-          <a href="#" onclick="FavAd('{% url 'ads:ad_favorite' ad.id %}', {{ad.id}}); return false;"
+          <!-- two href - fav and unfav - -->
+          <!-- first one -->
+          <a href="#" onclick="FavAd('{% url 'ads:ad_unfavorite' ad.id %}', {{ad.id}}); return false;"
               {% if ad.id  not in favorites %} style="display: none;" {% endif %}
               id="fav_star_{{ad.id}}">
             <span class="fa-stack" style="vertical-align: middle;">
-              <i class="fa fa-stack-1x" style=" color: orange;"></i>
+              <i class="fa fa-star fa-stack-1x" style=" color: orange;"></i>
+              <i class="fa fa-star-o fa-stack-1x"></i>
+            </span>
+          </a>
+          <!-- second one -->
+          <a href="#" onclick="FavAd('{% url 'ads:ad_favorite' ad.id %}', {{ad.id}}); return false;"
+              {% if ad.id in favorites %} style="display: none;" {% endif %}
+              id="unfav_star_{{ad.id}}">
+            <span class="fa-stack" style="vertical-align: middle;">
+              <i class="fa fa-star fa-stack-1x" style=" display: none; color: orange;"></i>
               <i class="fa fa-star-o fa-stack-1x"></i>
             </span>
           </a>
@@ -39,6 +50,7 @@
   function FavAd(url, ad_id) {
     $.post(url , {}, function(data){   // url , data and call back function
         console.log(url, "done");       // empty {} because we didn't need to sent any data .. just the url
+        $("#unfav_star_"+ad_id).toggle();
         $("#fav_star_"+ad_id).toggle();
     }).fail(function(xhr){
       alert('Url failed with '+xhr.status+'  '+url);

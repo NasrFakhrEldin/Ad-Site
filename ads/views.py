@@ -147,3 +147,14 @@ class AddFavoriteView(LoginRequiredMixin, View):
         try: fav.save() # in case duplicate key
         except IntegrityError as e: pass
         return HttpResponse()
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        t = get_object_or_404(Ad, id = pk)
+        try:
+            fav = Fav.objects.get(user = request.user, ad = t).delete()
+        except Fav.DoesNotExist as e: pass
+
+        return HttpResponse()
