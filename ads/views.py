@@ -8,25 +8,41 @@ from django.views.generic import CreateView, UpdateView
 from ads.forms import CreateForm, CommentForm
 from ads.models import Ad, Comment, Fav
 from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
-
+from django.db.models import Q
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 class AdListView(OwnerListView): # edited during adding the "fav adds section"
-    model = Ad
     template_name = "ads/ad_list.html"
     
     def get(self, request):
-        ad_list = Ad.objects.all()
+
+        strval = request.GET.get("search", False)
+        # print(strval)
+        if strval:
+            query = Q(title__icontains = strval)
+            query.add(Q(text__icontains = strval), Q.OR)
+            
+            ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
+            # print(ad_list)
+        else:
+            ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+
+        for obj in ad_list:
+            obj.natural_updated = naturaltime(obj.updated_at)
+
+
         favorites = list()
         
         if request.user.is_authenticated:
             rows = request.user.favorite_ads.values('id') # ids for all favorite_ads to this request_user
-            print(rows)
+            # print(rows)
             favorites = [row['id'] for row in rows]
             # print(favorites)
 
         return render(request, self.template_name, {
             "ad_list" : ad_list,
             "favorites" : favorites,
+            "search" : strval,
         })
         
 
