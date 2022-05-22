@@ -20,7 +20,7 @@
 {% if ad.content_type %}
 <div id="overlay" class="overlay" style="text-align: center;"
    onclick="document.getElementById('overlay').style.display = 'none';" >
-<img style="width:90%;margin-top: 50px; border:3px solid black;" src="{% url 'ads:ad_picture' ad.id %}">
+<img style="width:75%;margin-top: 50px; border:3px solid black;" src="{% url 'ads:ad_picture' ad.id %}">
 </div>
 {% endif %}
 
@@ -60,6 +60,7 @@
 {% endif %}
 
 {% for comment in comments %}
+<h3>Comments:</h3>
 <p> {{ comment.text }}
 ({{ comment.updated_at|naturaltime }})
 {% if user == comment.owner %}
