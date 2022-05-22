@@ -47,9 +47,13 @@
   {% endfor %}
 </ul>
 {% else %}
-  <p>There are no ads in the database.</p>
-{% endif %}
+    {% if search %}
+        <p>There are no ads that match your search criteria.</p>
+    {% else %}
+      <p>There are no ads in the database.</p>
+    {% endif %}
 </p>
+{% endif %}
 <p>
 <a href="{% url 'ads:ad_create' %}">Add an Ad</a>
 </p>

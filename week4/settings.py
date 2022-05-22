@@ -44,14 +44,17 @@ INSTALLED_APPS = [
     'crispy_forms',
     # 'rest_framework',
     'social_django',
-    # 'taggit',
-    # 'home.apps.HomeConfig',
+    'taggit',
+
 
     'ads',
 ]
 
 # When we get to crispy forms :)
 CRISPY_TEMPLATE_PACK = 'bootstrap3'  # Add
+
+# When we get to tagging
+TAGGIT_CASE_INSENSITIVE = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -21,6 +21,7 @@ class AdListView(OwnerListView): # edited during adding the "fav adds section"
         if strval:
             query = Q(title__icontains = strval)
             query.add(Q(text__icontains = strval), Q.OR)
+            query.add(Q(tags__name__in = [strval]), Q.OR)
             
             ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
             # print(ad_list)
@@ -77,6 +78,10 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         ad = form.save(commit=False)
         ad.owner = self.request.user
         ad.save()
+
+        # https://django-taggit.readthedocs.io/en/latest/forms.html#commit-false
+        form.save_m2m()
+        
         return redirect(self.success_url)
 
 
